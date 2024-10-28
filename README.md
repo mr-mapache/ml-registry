@@ -1,6 +1,6 @@
 # ml-registry
 
-The mlregistry library provides an efficient way to register and manage machine learning components, such as PyTorch models and optimizers. You can retrieve component metadata, inspect signatures, and ensure instance integrity through determinant hashes.
+Register, manage and track machine learning components easilly, such as PyTorch models and optimizers. You can retrieve component metadata, inspect signatures, and ensure instance integrity through determinant hashes.
 
 ## Example
 
@@ -73,7 +73,7 @@ criterion = CrossEntropyLoss()
 optimizer = Adam(model.parameters(), lr=1e-3)
 dataset = MNIST('data', train=True, download=True)
 
-dataset_metada = get_metadata(dataset) # You are now able to serialize the dataset metadata! and reconstruct the dataset instance later.
+dataset_metada = get_metadata(dataset) # You are now able to serialize the dataset metadata! 
 
 ```
 
