@@ -73,8 +73,10 @@ criterion = CrossEntropyLoss()
 optimizer = Adam(model.parameters(), lr=1e-3)
 dataset = MNIST('data', train=True, download=True)
 
-dataset_metada = get_metadata(dataset) # You are now able to serialize the dataset metadata! 
-
+dataset_metada = get_metadata(dataset)
+print(dataset_metadata) # You are now able to serialize the dataset metadata!
+optimizer_metadata = get_metadata(dataset)
+print(optimizer_metadata) # Since we exclude it, params argument will not be present in the metadata
 ```
 
 Now you will be able to track the components of your machine learning pipeline and serialize them without worrying about given them ugly names that can collide, like "perceptron_model_324" or having to manually track their parameters, since the metadata factory will take care of that for you.
