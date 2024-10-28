@@ -13,7 +13,7 @@ Registry.register(Perceptron)
 
 ```
 
-Now the `Registry` class injected a metadata factory in the `Perceptron` model, that will be created when the model is instantiated. The metadata factory will generate:
+Now the `Registry` class injected a metadata factory in the `Perceptron` model, metadata that will be created when the model is instantiated. The metadata contains:
 
 
 - The name of the model, that can be used to retrieve the model instance from the registry and recognize the model during serialization.
