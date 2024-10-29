@@ -4,8 +4,24 @@ Register, manage and track machine learning components easilly, such as PyTorch 
 
 ## Installation
 
+Install the package with pip:
+
 ```bash
 pip install mlregistry
+```
+
+If you are using poetry:
+
+```bash
+poetry add mlregistry
+```
+
+If you want to build it yourself:
+
+```bash
+git clone https://github.com/mapache-software/ml-registry
+cd ml-registry
+poetry install
 ```
 
 ## Example
