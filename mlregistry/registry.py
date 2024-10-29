@@ -28,7 +28,7 @@ def date_hash(datetime: datetime):
     return md5(datetime.isoformat().encode()).hexdigest()
 
 class Registry[T]:
-    def __init__(self, aditional_parameters: dict[str, Any] = None, exclude_parameters: set[str] = None, excluded_positions: list[int] = None):
+    def __init__(self, exclude_parameters: set[str] = None, excluded_positions: list[int] = None, aditional_parameters: dict[str, Any] = None):
         self.types = dict()
         self.states = dict()
         self.excluded_postitions = excluded_positions or []
