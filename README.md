@@ -2,6 +2,12 @@
 
 Register, manage and track machine learning components easilly, such as PyTorch models and optimizers. You can retrieve component metadata, inspect signatures, and ensure instance integrity through determinant hashes.
 
+## Installation
+
+```bash
+pip install mlregistry
+```
+
 ## Example
 
 ```python
