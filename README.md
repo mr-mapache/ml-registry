@@ -97,7 +97,7 @@ dataset = MNIST('data', train=True, download=True)
 
 dataset_metada = get_metadata(dataset)
 print(dataset_metadata) # You are now able to serialize the dataset metadata!
-optimizer_metadata = get_metadata(dataset)
+optimizer_metadata = get_metadata(optimizer)
 print(optimizer_metadata) # Since we exclude it, params argument will not be present in the metadata
 ```
 
