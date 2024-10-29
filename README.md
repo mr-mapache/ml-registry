@@ -16,7 +16,7 @@ If you are using poetry:
 poetry add mlregistry
 ```
 
-If you want to build it yourself:
+Or if you want to build it yourself:
 
 ```bash
 git clone https://github.com/mapache-software/ml-registry
@@ -25,6 +25,8 @@ poetry install
 ```
 
 ## Example
+
+Let's say you have a Perceptron coded in some machine library like PyTorch. To start using the registry just import the Registry class and register the class you want to track.
 
 ```python
 from models import Perceptron
