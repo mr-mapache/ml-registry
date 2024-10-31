@@ -98,7 +98,7 @@ dataset_metadata = get_metadata(dataset)
 print(dataset_metadata)  # Serialize dataset metadata
 
 optimizer_metadata = get_metadata(optimizer)
-print(optimizer_metadata)  # Excluded parameters like 'params' won’t appear in metadata
+print(optimizer_metadata)  # Excluded parameters like 'params' or the first positional argument won’t appear in metadata
 ```
 
 This approach enables component tracking and serialization without worrying about naming conflicts or manual parameter tracking.
