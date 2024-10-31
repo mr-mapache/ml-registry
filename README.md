@@ -1,6 +1,11 @@
 # ml-registry
 
-Register, manage and track machine learning components easilly, such as PyTorch models and optimizers. You can retrieve component metadata, inspect signatures, and ensure instance integrity through determinant hashes.
+Register, manage, and track machine learning components easily, such as PyTorch models and optimizers. You can retrieve component metadata, inspect signatures, and ensure instance integrity through deterministic hashes.
+
+## Introduction
+
+Tracking machine learning components can be challenging, especially when you have to name them, track their parameters, and ensure the instance you're using matches the one you trained. This library addresses these issues by providing a simple way to register, manage, and track machine learning components, such as models, optimizers, and datasets. It uses cryptographic hashes to create unique identifiers for components based on their names, signatures, and parameters.
+
 
 ## Installation
 
@@ -10,24 +15,15 @@ Install the package with pip:
 pip install mlregistry
 ```
 
-If you are using poetry:
+Using conda:
 
-```bash
-poetry add mlregistry
 ```
-
-Or if you want to build it yourself:
-
-```bash
-git clone https://github.com/mapache-software/ml-registry
-cd ml-registry
-poetry install
+conda install pip
+pip install mlregistry
 ```
 
 ## Example
-
-Let's say you have a Perceptron coded in some machine library like PyTorch. To start using the registry just import the Registry class and register the class you want to track.
-
+Suppose you have a Perceptron model built with PyTorch. To start using the registry, import the Registry class and register the class you want to track:
 ```python
 from models import Perceptron
 from mlregistry import Registry
@@ -37,34 +33,33 @@ Registry.register(Perceptron)
 
 ```
 
-Now the `Registry` class injected a metadata factory in the `Perceptron` model, metadata that will be created when the model is instantiated. The metadata contains:
+The Registry class injects a metadata factory into the Perceptron model. This metadata includes:
 
-
-- The name of the model, that can be used to retrieve the model instance from the registry and recognize the model during serialization.
-- A unique hash of the model instance, usefull for locally identifying the model instance, based on the model's name, signature, and the parameters passed to the constructor.
-- A tuple with the model's positional arguments and keyword arguments, that can be used to reconstruct the model instance.
-- The model's signature with the model's annotations, usefull for exposing the model's and training using request-response APIs.
+- Model name: Used to retrieve the model instance from the registry and recognize it during serialization.
+- Unique hash: Useful for identifying the model instance locally, based on the model’s name, signature, and constructor parameters.
+- Arguments: A tuple with positional and keyword arguments for reconstructing the model instance.
+- Signature: Includes model annotations, which is useful for exposing the model’s configuration and usage in request-response APIs.
 
 ```python
 from mlregistry import get_metadata, get_hash, get_signature
 
 perceptron = Perceptron(784, 256, 10, p=0.5, bias=True)
 
-### Get metadata, hash, and signature of the model instance
+# Get metadata, hash, and signature of the model instance
 hash = get_hash(perceptron)
-print(hash) # 1a79a4d60de6718e8e5b326e338ae533
+print(hash)  # e.g., "1a79a4d60de6718e8e5b326e338ae533"
 
 metadata = get_metadata(perceptron)
-print(metadata.name) # Perceptron
-print(metadata.args) # (784, 256, 10)
-print(metadata.kwargs) # {'p': 0.5, 'bias': True}
+print(metadata.name)  # Perceptron
+print(metadata.args)  # (784, 256, 10)
+print(metadata.kwargs)  # {'p': 0.5, 'bias': True}
 
 signature = get_signature(perceptron)
-print(signature) # {input_size: int, hidden_size: int, output_size: int, p: float, bias: bool}
+print(signature)  # {input_size: int, hidden_size: int, output_size: int, p: float, bias: bool}
 
 ```
 
-Now you can use the `Registry` class to retrieve the model type from the registry.
+You can retrieve the model type from the registry:
 
 ```python
 
@@ -75,7 +70,8 @@ assert isinstance(model_instance, Perceptron)
 
 ```
 
-It works well with other components as well like optimizers or datasets. For more complex usage it's recommended to create a repository class that will manage the components and their dependencies. This will make it easier to persist the components of your machine learning pipeline.
+This works with other components as well, like optimizers and datasets. For complex setups, consider creating a repository class to manage components and dependencies, simplifying pipeline persistence.
+
 
 ```python
 from torch.nn import Module, CrossEntropyLoss
@@ -97,10 +93,11 @@ criterion = CrossEntropyLoss()
 optimizer = Adam(model.parameters(), lr=1e-3)
 dataset = MNIST('data', train=True, download=True)
 
-dataset_metada = get_metadata(dataset)
-print(dataset_metadata) # You are now able to serialize the dataset metadata!
+dataset_metadata = get_metadata(dataset)
+print(dataset_metadata)  # Serialize dataset metadata
+
 optimizer_metadata = get_metadata(optimizer)
-print(optimizer_metadata) # Since we exclude it, params argument will not be present in the metadata
+print(optimizer_metadata)  # Excluded parameters like 'params' won’t appear in metadata
 ```
 
-Now you will be able to track the components of your machine learning pipeline and serialize them without worrying about given them ugly names that can collide, like "perceptron_model_324" or having to manually track their parameters, since the metadata factory will take care of that for you.
+This approach enables component tracking and serialization without worrying about naming conflicts or manual parameter tracking.
