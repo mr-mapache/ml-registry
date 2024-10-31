@@ -43,6 +43,7 @@ The Registry class injects a metadata factory into the Perceptron model. This me
 ```python
 from mlregistry import get_metadata, get_hash, get_signature
 
+registry = Registry() #Create a registry instance before or after registry of classes. 
 perceptron = Perceptron(784, 256, 10, p=0.5, bias=True)
 
 # Get metadata, hash, and signature of the model instance
@@ -63,7 +64,7 @@ You can retrieve the model type from the registry:
 
 ```python
 
-model_type = Registry.get('Perceptron')
+model_type = registry.get('Perceptron')
 model_instance = model_type(input_size=784, hidden_size=256, output_size=10, p=0.5, bias=True)
 
 assert isinstance(model_instance, Perceptron)
