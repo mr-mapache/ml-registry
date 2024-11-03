@@ -10,20 +10,21 @@ from dataclasses import dataclass
 
 logger = getLogger(__name__)
 
-def type_signature(type: type, excluded_parameters: set[str]) -> dict[str, str]:
-    init = type.__init__
+def type_signature(object: object, excluded_parameters: set[str]) -> dict[str, str]:
+    init = object.__init__
     argspec = getfullargspec(init)
     annotations = { key: (value.__name__ if value is not None else Any.__name__)  for key, value in argspec.annotations.items() }    
     parameters = { key: annotations.get(key, Any.__name__)  for key in argspec.args if key not in excluded_parameters }    
     return parameters
 
-def object_hashing(object: object, args, kwargs, excluded_parameters: set[str]) -> UUID:
+def object_parameters(args: list[Any], kwargs: list[str, Any], signature: dict[str, str]):
+    return { key: value for value, key in zip(args, signature.keys()) } | kwargs
+
+def object_hashing(object: object, args: list[Any], kwargs: list[str, Any], excluded_parameters: set[str]) -> UUID:
     name = object.__class__.__name__
-    name += dumps(type_signature(object, excluded_parameters), sort_keys=True)
-    for arg in args:
-        name += str(arg)
-    name += dumps(kwargs, sort_keys=True)
-    return md5(name.encode()).hexdigest()
+    parameters = object_parameters(args, kwargs, type_signature(object, excluded_parameters))
+    print((name + dumps(parameters, sort_keys=True)))
+    return md5((name + dumps(parameters, sort_keys=True)).encode()).hexdigest()
 
 @dataclass
 class Metadata[T]:
