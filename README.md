@@ -51,9 +51,7 @@ hash = get_hash(perceptron)
 print(hash)  # e.g., "1a79a4d60de6718e8e5b326e338ae533"
 
 metadata = get_metadata(perceptron)
-print(metadata.name)  # Perceptron
-print(metadata.args)  # (784, 256, 10)
-print(metadata.kwargs)  # {'p': 0.5, 'bias': True}
+print(metadata.arguments)  # {'input_size': 784, 'hidden_size': 256, 'output_size': 10, 'p': 0.5, 'bias': True}
 
 signature = get_signature(perceptron)
 print(signature)  # {input_size: int, hidden_size: int, output_size: int, p: float, bias: bool}
