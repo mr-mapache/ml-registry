@@ -9,21 +9,25 @@ from hashlib import md5
 from dataclasses import dataclass
 
 logger = getLogger(__name__)
+from copy import deepcopy
 
-def type_signature(type: type, excluded_parameters: set[str]) -> dict[str, str]:
+def type_signature(type: type, excluded_positions: list[int], excluded_parameters: set[str]) -> dict[str, str]:
     init = type.__init__
     argspec = getfullargspec(init)
-    annotations = { key: (value.__name__ if value is not None else Any.__name__)  for key, value in argspec.annotations.items() }    
-    parameters = { key: annotations.get(key, Any.__name__)  for key in argspec.args if key not in excluded_parameters }    
-    return parameters
+    annotations = {key: (value.__name__ if value is not None else Any.__name__) for key, value in argspec.annotations.items()}
+    args = [arg for index, arg in enumerate(argspec.args) if index not in excluded_positions]
+    signature = {key: annotations.get(key, Any.__name__) for key in args if key not in excluded_parameters}
+    return deepcopy(signature)
 
-def object_hashing(object: object, args, kwargs, excluded_parameters: set[str]) -> UUID:
+def object_parameters(args: list[Any], kwargs: dict[str, Any], signature: dict[str, str]):
+    args_dict = { key: value for value, key in zip(args, signature.keys()) }
+    kwargs_dict = { key: value for key, value in kwargs.items() if key in signature.keys() }
+    return deepcopy(args_dict | kwargs_dict)
+
+def object_hashing(object: object, args: list[Any], kwargs: list[str, Any], excluded_positions: list[int], excluded_parameters: set[str]) -> UUID:
     name = object.__class__.__name__
-    name += dumps(type_signature(object, excluded_parameters), sort_keys=True)
-    for arg in args:
-        name += str(arg)
-    name += dumps(kwargs, sort_keys=True)
-    return md5(name.encode()).hexdigest()
+    parameters = object_parameters(args, kwargs, type_signature(object, excluded_positions, excluded_parameters))
+    return md5((name + dumps(parameters, sort_keys=True)).encode()).hexdigest()
 
 @dataclass
 class Metadata[T]:
@@ -34,22 +38,19 @@ class Metadata[T]:
         type (str): the type of the object (should be the same as T, but python does not support this yet)
         hash (str): the hash of the object
         name (str): the name of the object
-        args (tuple): the arguments that were passed to the object during initialization
-        kwargs (dict[str, Any]): the keyword arguments that were passed to the object during initialization
+        arguments (dict[str, Any]): the arguments that were passed to the object during initialization
     '''
     type: str
     hash: str
     name: str
-    args: tuple
-    kwargs: dict[str, Any]
+    arguments: dict[str, Any]
 
 class Registry[T]:
-    def __init__(self, excluded_positions: list[int] = None, exclude_parameters: set[str] = None, aditional_parameters: dict[str, Any] = None):
+    def __init__(self, excluded_positions: list[int] = None, exclude_parameters: set[str] = None):
         self.types = dict()
         self.states = dict()
-        self.excluded_postitions = excluded_positions or []
-        self.aditional_parameters = aditional_parameters or dict()
-        self.excluded_parameters = ( exclude_parameters or set[str]() ) | {'self', 'return'}
+        self.excluded_positions = excluded_positions or []
+        self.excluded_parameters = ( exclude_parameters or set() ) | {'self', 'return'}
 
     def register(self, type: type, category: str = None) -> type:
         '''
@@ -63,21 +64,17 @@ class Registry[T]:
             type: the registered type with metadata factory injected in the __init__ method.
         '''
 
-        signature = type_signature(type, self.excluded_parameters)
+        signature = type_signature(type, self.excluded_positions, self.excluded_parameters)
         self.types[type.__name__] = (type, signature)
         init = type.__init__
-
         def wrapper(obj, *args, **kwargs):
-            included_args = tuple([ arg for index, arg in enumerate(args) if index not in self.excluded_postitions ])
-            included_kwargs = { key: value for key, value in kwargs.items() if key not in self.excluded_parameters } | self.aditional_parameters
             init(obj, *args, **kwargs)
             setattr(obj, '__model__metadata__',
                 Metadata[T](
                     type=category or 'object',
-                    hash=object_hashing(obj, included_args, included_kwargs, self.excluded_parameters),
+                    hash=object_hashing(obj, args, kwargs, self.excluded_positions, self.excluded_parameters),
                     name=type.__name__,
-                    args=included_args,
-                    kwargs=included_kwargs
+                    arguments=object_parameters(args, kwargs, signature)
                 )
             )
 

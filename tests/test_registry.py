@@ -5,7 +5,7 @@ class Model:
     def params(self) -> dict: ...
 
 class Perceptron:
-    def __init__(self, input_size: int, hidden_size: int, output_size: int, p: float, activation):
+    def __init__(self, input_size, hidden_size: int, output_size: int, p: float, activation):
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.output_size = output_size
@@ -38,19 +38,23 @@ def test_metadata(repository: Repository):
 
     model_hash = get_hash(model)
     assert len(model_hash) == 32 and all(c in "0123456789abcdefABCDEF" for c in model_hash), "Not a valid MD5 hash format."
-    
 
     model_metadata = get_metadata(model)
-    assert model_metadata.args == (10, 20, 30)
-    assert model_metadata.kwargs == {'p': 0.5, 'activation': 'relu'}
+    print(model_metadata.arguments)
+    assert model_metadata.arguments == {
+        'input_size': 10,
+        'hidden_size': 20,
+        'output_size': 30,
+        'p': 0.5, 
+        'activation': 'relu'
+    }
     assert model_metadata.name == 'Perceptron'
 
     optimizer_metadata = get_metadata(optimizer)
-    assert optimizer_metadata.args == ()
-    assert optimizer_metadata.kwargs == {'lr': 0.01}
+    assert optimizer_metadata.arguments == {'lr': 0.01}
 
     model_signature = get_signature(model)
-    assert model_signature == {'input_size': 'int', 'hidden_size': 'int', 'output_size': 'int', 'p': 'float', 'activation': 'Any'}
+    assert model_signature == {'input_size': 'Any', 'hidden_size': 'int', 'output_size': 'int', 'p': 'float', 'activation': 'Any'}
     
 
 def test_retrieval(repository: Repository):
