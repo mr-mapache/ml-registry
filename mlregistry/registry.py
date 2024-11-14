@@ -69,15 +69,17 @@ class Registry[T]:
         init = type.__init__
         def wrapper(obj, *args, **kwargs):
             init(obj, *args, **kwargs)
+            parameters = object_parameters(args, kwargs, signature)
+            hash = object_hashing(obj, args, kwargs, self.excluded_positions, self.excluded_parameters)
+            logger.info(f'Initializing {category} {type.__name__} with hash {hash} and parameters {parameters}')
             setattr(obj, '__model__metadata__',
                 Metadata[T](
                     type=category or 'object',
-                    hash=object_hashing(obj, args, kwargs, self.excluded_positions, self.excluded_parameters),
+                    hash=hash,
                     name=type.__name__,
-                    arguments=object_parameters(args, kwargs, signature)
+                    arguments=parameters
                 )
             )
-
             setattr(obj, '__model__signature__', signature)
 
         type.__init__ = wrapper
