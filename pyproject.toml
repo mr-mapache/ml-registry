@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlregistry"
-version = "1.0.2"
+version = "1.0.3"
 description = "Register, retrieve and get metadata from machine learning models."
 authors = ["Eric Cardozo <eric.m.cardozo@mi.unc.edu.ar>"]
 readme = "README.md"
