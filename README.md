@@ -77,15 +77,15 @@ from torch.nn import Module, CrossEntropyLoss
 from torch.optim import Optimizer, Adam
 from torchvision.datasets import MNIST
 
-class Repository:
+class Container:
     models = Registry[Module]()
     criterions = Registry[Module]()
     optimizers = Registry[Optimizer](excluded_positions=[0], exclude_parameters={'params'})
     datasets = Registry[Dataset](excluded_positions=[0], exclude_parameters={'root', 'download'})
 
-Repository.models.register(Perceptron)
-Repository.optimizers.register(Adam)
-Repository.datasets.register(MNIST)
+Container.models.register(Perceptron)
+Container.optimizers.register(Adam)
+Container.datasets.register(MNIST)
 
 model = Perceptron(784, 256, 10, p=0.5, bias=True)
 criterion = CrossEntropyLoss()
