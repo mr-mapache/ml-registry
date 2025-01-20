@@ -1,4 +1,4 @@
-# ml-registry
+# MLRegistry
 
 Register, manage, and track machine learning components easily, such as PyTorch models and optimizers. You can retrieve component metadata, inspect signatures, and ensure instance integrity through deterministic hashes.
 
