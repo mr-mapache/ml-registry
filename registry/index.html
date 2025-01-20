@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Registry - mlregistry</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Registry";
+        var mkdocs_page_input_path = "registry.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> mlregistry
+        </a>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Registry</a>
+    <ul class="current">
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">mlregistry</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Registry</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h3 id="add-metadata-to-objects-without-them-to-know-it">Add metadata to objects without them to know it.</h3>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="mlregistry.registry"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="mlregistry.registry.Metadata" class="doc doc-heading">
+            <code>Metadata</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Metadata class to store the metadata of an object. It contains the type, hash, name, and arguments of the object.
+This is useful for tracking the initialization of objects wihtout having to modify them.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>type</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>the type of the object (should be the same as T, but python does not support this yet)</p>
+              </div>
+            </li>
+            <li>
+              <b><code>hash</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>the hash of the object</p>
+              </div>
+            </li>
+            <li>
+              <b><code>name</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>the name of the object</p>
+              </div>
+            </li>
+            <li>
+              <b><code>arguments</code></b>
+                  (<code>dict[str, <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>the arguments that were passed to the object during initialization</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="mlregistry.registry.Registry" class="doc doc-heading">
+            <code>Registry</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Register a type in the registry with metadata factory injected in the <strong>init</strong> method. When an object that is
+registered is created, a metadata object is created and attached to the object and is accessible using the functions
+<code>getmetadata</code>, <code>getsignature</code>, and <code>gethash</code>.</p>
+<p>After registering a type, the objects of that type can be recreated from the registry using the <code>get</code> method.</p>
+
+
+<p><span class="doc-section-title">Methods:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="mlregistry.registry.Registry.register" href="#mlregistry.registry.Registry.register">register</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Register a type in a given category. This method injects metadata in the <strong>init</strong> method of the type.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="mlregistry.registry.Registry.get" href="#mlregistry.registry.Registry.get">get</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Get a registered type by name</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="mlregistry.registry.Registry.keys" href="#mlregistry.registry.Registry.keys">keys</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Get the list of registered type names</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="mlregistry.registry.Registry.signature" href="#mlregistry.registry.Registry.signature">signature</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Get the signature of a registered type by name</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
+        <p>Example:</p>
+<pre><code>.. code-block:: python
+
+from mlregistry import Registry
+
+registry = Registry()
+
+class Person:
+    def __init__(self, name: str, age: int):
+        self.person_name = name
+        self.person_age = age
+
+registry.register(Person, 'People')
+
+person = Person('John', 30)
+
+metadata = getmetadata(person)
+print(metadata) # Metadata(type='People', hash='h72kasd..as2', name='Person', arguments={'name': 'John', 'age': 30})
+</code></pre>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="mlregistry.registry.Registry.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(excluded_positions=None, exclude_parameters=None)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Initialize the registry with a dictionary of registered types, their states, excluded positions, and excluded parameters.
+The excluded positions are the positions are the positions to exclude in the signature of the registered types and the
+excluded parameters are the parameters to exclude in the signature of the registered types. Make sure to handle both cases
+when registering a type.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>types</code></b>
+                  (<code>dict[str, Tuple[type, dict[str, str]]</code>)
+              –
+              <div class="doc-md-description">
+                <p>a dictionary of registered types with their signatures</p>
+              </div>
+            </li>
+            <li>
+              <b><code>states</code></b>
+                  (<code>dict[str, <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>a dictionary of the states of the registered types</p>
+              </div>
+            </li>
+            <li>
+              <b><code>excluded_positions</code></b>
+                  (<code>list[int]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>a list of excluded positions in the signature of the registered types.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>excluded_parameters</code></b>
+                  (<code>set[str]</code>)
+              –
+              <div class="doc-md-description">
+                <p>a set of excluded parameters in the signature of the registered types.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>        <p>Example:</p>
+<p>.. code-block:: python</p>
+<pre><code>from mlregistry import Registry
+
+optimizers = Registry(excluded_positions=[0], exclude_parameters={'params'})
+</code></pre>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="mlregistry.registry.Registry.get" class="doc doc-heading">
+            <code class="highlight language-python">get(name)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get a registered type by name</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>the name of the type to be retrieved</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>type</code></b>(                  <code><span title="typing.Optional">Optional</span>[type[T]]</code>
+)              –
+              <div class="doc-md-description">
+                <p>the registered type</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="mlregistry.registry.Registry.keys" class="doc doc-heading">
+            <code class="highlight language-python">keys()</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the list of registered type names</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>list[str]</code>
+              –
+              <div class="doc-md-description">
+                <p>list[str]: the list of registered type names</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="mlregistry.registry.Registry.register" class="doc doc-heading">
+            <code class="highlight language-python">register(type, category=None)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Register a type in a given category. This method injects metadata in the <strong>init</strong> method of the type.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>type</code></b>
+                  (<code>type</code>)
+              –
+              <div class="doc-md-description">
+                <p>the type to be registered</p>
+              </div>
+            </li>
+            <li>
+              <b><code>category</code></b>
+                  (<code>str</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>the category of the type, should be the same as T, but python does not support this yet</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>type</code></b>(                  <code>type</code>
+)              –
+              <div class="doc-md-description">
+                <p>the registered type with metadata factory injected in the <strong>init</strong> method.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="mlregistry.registry.Registry.signature" class="doc doc-heading">
+            <code class="highlight language-python">signature(name)</code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the signature of a registered type by name</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>the name of the type to be retrieved</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Optional">Optional</span>[dict[str, str]]</code>
+              –
+              <div class="doc-md-description">
+                <p>dict[str, str]: the signature of the registered type</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="mlregistry.registry.getdatehash" class="doc doc-heading">
+            <code class="highlight language-python">getdatehash(datetime)</code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the hash of a datetime object</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>datetime</code></b>
+                  (<code><span title="datetime.datetime">datetime</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>the datetime object to get the hash from</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>str</code></b>(                  <code>str</code>
+)              –
+              <div class="doc-md-description">
+                <p>the hash of the datetime object</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="mlregistry.registry.gethash" class="doc doc-heading">
+            <code class="highlight language-python">gethash(object, raises=None)</code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the local identifier of an object</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>object</code></b>
+                  (<code>object</code>)
+              –
+              <div class="doc-md-description">
+                <p>the object to get the hash from</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>str</code></b>(                  <code>str</code>
+)              –
+              <div class="doc-md-description">
+                <p>the hash of the object if available, or None if no exception is raised</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>raises</code>
+              –
+              <div class="doc-md-description">
+                <p>If the object does not have a hash and <code>raises</code> is specified</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="mlregistry.registry.getmetadata" class="doc doc-heading">
+            <code class="highlight language-python">getmetadata(object, raises=None)</code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the metadata of an object.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>obj</code></b>
+                  (<code>object</code>)
+              –
+              <div class="doc-md-description">
+                <p>The object to retrieve the metadata from.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>raises</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[Type[Exception]]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>An exception to raise if the object does not have metadata.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" title="mlregistry.registry.Metadata" href="#mlregistry.registry.Metadata">Metadata</a>]</code>
+              –
+              <div class="doc-md-description">
+                <p>Optional[Metadata]: The metadata of the object if available, or None if no exception is raised.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>raises</code>
+              –
+              <div class="doc-md-description">
+                <p>If the object does not have metadata and <code>raises</code> is specified.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="mlregistry.registry.getsignature" class="doc doc-heading">
+            <code class="highlight language-python">getsignature(object, raises=None)</code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the signature of an object. Return a dictionary with parameter names and annotations.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>object</code></b>
+                  (<code>object</code>)
+              –
+              <div class="doc-md-description">
+                <p>the object to get the signature from</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>dict[str, str]</code>
+              –
+              <div class="doc-md-description">
+                <p>dict[str, str]: the signature of the object if available, or None if no exception is raised</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>raises</code>
+              –
+              <div class="doc-md-description">
+                <p>If the object does not have a signature and <code>raises</code> is specified.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
