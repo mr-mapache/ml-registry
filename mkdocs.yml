@@ -5,6 +5,7 @@ theme:
 
 nav:
   - Home: index.md
+  - Registry: registry.md
 
 plugins:
   - mkdocstrings:

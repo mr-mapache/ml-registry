@@ -1,5 +1,5 @@
 from pytest import fixture
-from mlregistry.registry import Registry, get_metadata, get_signature, get_hash
+from mlregistry.registry import Registry, getmetadata, getsignature, gethash
 
 class Model:
     def params(self) -> dict: ...
@@ -36,10 +36,10 @@ def test_metadata(repository: Repository):
     model = Perceptron(10, 20, 30, p=0.5, activation='relu')
     optimizer = Optimizer(params=model.params(), lr=0.01)
 
-    model_hash = get_hash(model)
+    model_hash = gethash(model)
     assert len(model_hash) == 32 and all(c in "0123456789abcdefABCDEF" for c in model_hash), "Not a valid MD5 hash format."
 
-    model_metadata = get_metadata(model)
+    model_metadata = getmetadata(model)
     print(model_metadata.arguments)
     assert model_metadata.arguments == {
         'input_size': 10,
@@ -50,10 +50,10 @@ def test_metadata(repository: Repository):
     }
     assert model_metadata.name == 'Perceptron'
 
-    optimizer_metadata = get_metadata(optimizer)
+    optimizer_metadata = getmetadata(optimizer)
     assert optimizer_metadata.arguments == {'lr': 0.01}
 
-    model_signature = get_signature(model)
+    model_signature = getsignature(model)
     assert model_signature == {'input_size': 'Any', 'hidden_size': 'int', 'output_size': 'int', 'p': 'float', 'activation': 'Any'}
     
 

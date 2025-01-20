@@ -6,8 +6,6 @@ from json import dumps
 from logging import getLogger
 from hashlib import md5
 from dataclasses import dataclass
-
-logger = getLogger(__name__)
 from copy import deepcopy
 
 def type_signature(type: type, excluded_positions: list[int], excluded_parameters: set[str]) -> dict[str, str]:
@@ -29,9 +27,10 @@ def object_hashing(object: object, args: list[Any], kwargs: list[str, Any], excl
     return md5((name + dumps(parameters, sort_keys=True)).encode()).hexdigest()
 
 @dataclass
-class Metadata[T]:
+class Metadata:
     '''
-    Metadata class to store the metadata of an object
+    Metadata class to store the metadata of an object. It contains the type, hash, name, and arguments of the object.
+    This is useful for tracking the initialization of objects wihtout having to modify them.
 
     Attributes:
         type (str): the type of the object (should be the same as T, but python does not support this yet)
@@ -53,14 +52,39 @@ class Registry[T]:
 
     def register(self, type: type, category: str = None) -> type:
         '''
-        Register a type in the registry
+        Register a type in the registry with metadata factory injected in the __init__ method. When an object that is
+        registered is created, a metadata object is created and attached to the object and is accessible using the functions
+        `getmetadata`, `getsignature`, and `gethash`.
 
+        After registering a type, the objects of that type can be recreated from the registry using the `get` method.
+
+        
         Parameters:
             type (type): the type to be registered
             category (str): the category of the type, should be the same as T, but python does not support this yet
 
         Returns:
             type: the registered type with metadata factory injected in the __init__ method.
+
+        Example:
+
+            .. code-block:: python        
+
+            from mlregistry import Registry
+
+            registry = Registry()
+
+            class Person:
+                def __init__(self, name: str, age: int):
+                    self.person_name = name
+                    self.person_age = age
+            
+            registry.register(Person, 'People')
+
+            person = Person('John', 30)
+
+            metadata = getmetadata(person)
+            print(metadata) # Metadata(type='People', hash='h72kasd..as2', name='Person', arguments={'name': 'John', 'age': 30})
         '''
 
         signature = type_signature(type, self.excluded_positions, self.excluded_parameters)
@@ -70,14 +94,9 @@ class Registry[T]:
             init(obj, *args, **kwargs)
             parameters = object_parameters(args, kwargs, signature)
             hash = object_hashing(obj, args, kwargs, self.excluded_positions, self.excluded_parameters)
-            logger.info(f'Initializing {category or 'object'} with:')
-            logger.info(f'- name: {type.__name__}')
-            logger.info(f'- hash: {hash}')
-            if parameters:
-                logger.info(f'- arguments: {parameters}' )
 
             setattr(obj, '__model__metadata__',
-                Metadata[T](
+                Metadata(
                     type=category or 'object',
                     hash=hash,
                     name=type.__name__,
@@ -125,7 +144,7 @@ class Registry[T]:
         pair = self.types.get(name)
         return pair[1] if pair is not None else None
     
-def get_date_hash(datetime: datetime) -> str:
+def getdatehash(datetime: datetime) -> str:
     '''
     Get the hash of a datetime object
 
@@ -139,7 +158,7 @@ def get_date_hash(datetime: datetime) -> str:
 
 
     
-def get_metadata(object: object, raises: Optional[type[Exception]] = None) -> Optional[Metadata]:
+def getmetadata(object: object, raises: Optional[type[Exception]] = None) -> Optional[Metadata]:
     """
     Get the metadata of an object.
 
@@ -164,9 +183,9 @@ def get_metadata(object: object, raises: Optional[type[Exception]] = None) -> Op
         return None
         
 
-def get_signature(object: object, raises: Optional[type[Exception]] = None) -> dict[str, str]:
+def getsignature(object: object, raises: Optional[type[Exception]] = None) -> dict[str, str]:
     '''
-    Get the signature of an object
+    Get the signature of an object. Return a dictionary with parameter names and annotations.
 
     Parameters:
         object (object): the object to get the signature from
@@ -188,7 +207,7 @@ def get_signature(object: object, raises: Optional[type[Exception]] = None) -> d
                 raise TypeError("`raises` must be an exception type.") from error
         return None
 
-def get_hash(object: object, raises: Optional[type[Exception]] = None) -> str:
+def gethash(object: object, raises: Optional[type[Exception]] = None) -> str:
     '''
     Get the local identifier of an object
 
@@ -201,5 +220,5 @@ def get_hash(object: object, raises: Optional[type[Exception]] = None) -> str:
     Raises:
         raises: If the object does not have a hash and `raises` is specified
     '''
-    metadata = get_metadata(object, raises)
+    metadata = getmetadata(object, raises)
     return metadata.hash if metadata is not None else None
