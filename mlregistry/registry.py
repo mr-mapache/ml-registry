@@ -44,7 +44,68 @@ class Metadata:
     arguments: dict[str, Any]
 
 class Registry[T]:
+    """
+    Register a type in the registry with metadata factory injected in the __init__ method. When an object that is
+    registered is created, a metadata object is created and attached to the object and is accessible using the functions
+    `getmetadata`, `getsignature`, and `gethash`.
+
+    After registering a type, the objects of that type can be recreated from the registry using the `get` method.
+
+    Methods:
+        register:
+            Register a type in a given category. This method injects metadata in the __init__ method of the type.
+
+        get: 
+            Get a registered type by name
+
+        keys:
+            Get the list of registered type names
+
+        signature:
+            Get the signature of a registered type by name
+
+    Example:
+
+        .. code-block:: python        
+
+        from mlregistry import Registry
+
+        registry = Registry()
+
+        class Person:
+            def __init__(self, name: str, age: int):
+                self.person_name = name
+                self.person_age = age
+        
+        registry.register(Person, 'People')
+
+        person = Person('John', 30)
+
+        metadata = getmetadata(person)
+        print(metadata) # Metadata(type='People', hash='h72kasd..as2', name='Person', arguments={'name': 'John', 'age': 30})
+    """
     def __init__(self, excluded_positions: list[int] = None, exclude_parameters: set[str] = None):
+
+        """
+        Initialize the registry with a dictionary of registered types, their states, excluded positions, and excluded parameters.
+        The excluded positions are the positions are the positions to exclude in the signature of the registered types and the
+        excluded parameters are the parameters to exclude in the signature of the registered types. Make sure to handle both cases
+        when registering a type.
+        
+        Args:
+            types (dict[str, Tuple[type, dict[str, str]]): a dictionary of registered types with their signatures
+            states (dict[str, Any]): a dictionary of the states of the registered types
+            excluded_positions (list[int]): a list of excluded positions in the signature of the registered types.
+            excluded_parameters (set[str]): a set of excluded parameters in the signature of the registered types.
+
+        Example:
+
+        .. code-block:: python
+
+            from mlregistry import Registry
+
+            optimizers = Registry(excluded_positions=[0], exclude_parameters={'params'})
+        """
         self.types = dict()
         self.states = dict()
         self.excluded_positions = excluded_positions or []
@@ -52,11 +113,7 @@ class Registry[T]:
 
     def register(self, type: type, category: str = None) -> type:
         '''
-        Register a type in the registry with metadata factory injected in the __init__ method. When an object that is
-        registered is created, a metadata object is created and attached to the object and is accessible using the functions
-        `getmetadata`, `getsignature`, and `gethash`.
-
-        After registering a type, the objects of that type can be recreated from the registry using the `get` method.
+        Register a type in a given category. This method injects metadata in the __init__ method of the type.
 
         
         Parameters:
@@ -65,26 +122,6 @@ class Registry[T]:
 
         Returns:
             type: the registered type with metadata factory injected in the __init__ method.
-
-        Example:
-
-            .. code-block:: python        
-
-            from mlregistry import Registry
-
-            registry = Registry()
-
-            class Person:
-                def __init__(self, name: str, age: int):
-                    self.person_name = name
-                    self.person_age = age
-            
-            registry.register(Person, 'People')
-
-            person = Person('John', 30)
-
-            metadata = getmetadata(person)
-            print(metadata) # Metadata(type='People', hash='h72kasd..as2', name='Person', arguments={'name': 'John', 'age': 30})
         '''
 
         signature = type_signature(type, self.excluded_positions, self.excluded_parameters)
