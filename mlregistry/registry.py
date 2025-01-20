@@ -1,4 +1,3 @@
-from uuid import uuid3, UUID, NAMESPACE_DNS
 from datetime import datetime
 from inspect import getfullargspec
 from typing import Optional
@@ -24,7 +23,7 @@ def object_parameters(args: list[Any], kwargs: dict[str, Any], signature: dict[s
     kwargs_dict = { key: value for key, value in kwargs.items() if key in signature.keys() }
     return deepcopy(args_dict | kwargs_dict)
 
-def object_hashing(object: object, args: list[Any], kwargs: list[str, Any], excluded_positions: list[int], excluded_parameters: set[str]) -> UUID:
+def object_hashing(object: object, args: list[Any], kwargs: list[str, Any], excluded_positions: list[int], excluded_parameters: set[str]) -> str:
     name = object.__class__.__name__
     parameters = object_parameters(args, kwargs, type_signature(object, excluded_positions, excluded_parameters))
     return md5((name + dumps(parameters, sort_keys=True)).encode()).hexdigest()
@@ -126,7 +125,7 @@ class Registry[T]:
         pair = self.types.get(name)
         return pair[1] if pair is not None else None
     
-def get_date_hash(datetime: datetime):
+def get_date_hash(datetime: datetime) -> str:
     '''
     Get the hash of a datetime object
 
@@ -140,19 +139,32 @@ def get_date_hash(datetime: datetime):
 
 
     
-def get_metadata(object: object) -> Metadata:
-    '''
-    Get the metadata of an object
-    
+def get_metadata(object: object, raises: Optional[type[Exception]] = None) -> Optional[Metadata]:
+    """
+    Get the metadata of an object.
+
     Parameters:
-        object (object): the object to get the metadata from
+        obj (object): The object to retrieve the metadata from.
+        raises (Optional[Type[Exception]]): An exception to raise if the object does not have metadata.
 
     Returns:
-        Metadata: the metadata of the object
-    '''
-    return getattr(object, '__model__metadata__')
+        Optional[Metadata]: The metadata of the object if available, or None if no exception is raised.
 
-def get_signature(object: object) -> dict[str, str]:
+    Raises:
+        raises: If the object does not have metadata and `raises` is specified.
+    """
+    try:
+        return getattr(object, '__model__metadata__')
+    except AttributeError as error:
+        if raises is not None:
+            if isinstance(raises, type) and issubclass(raises, Exception):
+                raise raises from error
+            else:
+                raise TypeError("`raises` must be an exception type.") from error
+        return None
+        
+
+def get_signature(object: object, raises: Optional[type[Exception]] = None) -> dict[str, str]:
     '''
     Get the signature of an object
 
@@ -160,12 +172,23 @@ def get_signature(object: object) -> dict[str, str]:
         object (object): the object to get the signature from
 
     Returns:
-        dict[str, str]: the signature of the object
+        dict[str, str]: the signature of the object if available, or None if no exception is raised
+
+    Raises:
+        raises: If the object does not have a signature and `raises` is specified. 
+
     '''
-    return getattr(object, '__model__signature__')
+    try:
+        return getattr(object, '__model__signature__')
+    except AttributeError as error:
+        if raises is not None:
+            if isinstance(raises, type) and issubclass(raises, Exception):
+                raise raises from error
+            else:
+                raise TypeError("`raises` must be an exception type.") from error
+        return None
 
-
-def get_hash(object: object) -> str:
+def get_hash(object: object, raises: Optional[type[Exception]] = None) -> str:
     '''
     Get the local identifier of an object
 
@@ -173,6 +196,10 @@ def get_hash(object: object) -> str:
         object (object): the object to get the hash from
 
     Returns:
-        str: the hash of the object
+        str: the hash of the object if available, or None if no exception is raised
+        
+    Raises:
+        raises: If the object does not have a hash and `raises` is specified
     '''
-    return get_metadata(object).hash
+    metadata = get_metadata(object, raises)
+    return metadata.hash if metadata is not None else None
