@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>mlregistry</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> mlregistry
+        </a>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#example">Example</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">mlregistry</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="mlregistry">MLRegistry</h1>
+<p>Register, manage, and track machine learning components easily, such as PyTorch models and optimizers. You can retrieve component metadata, inspect signatures, and ensure instance integrity through deterministic hashes.</p>
+<h2 id="introduction">Introduction</h2>
+<p>Tracking machine learning components can be challenging, especially when you have to name them, track their parameters, and ensure the instance you're using matches the one you trained. This library addresses these issues by providing a simple way to register, manage, and track machine learning components, such as models, optimizers, and datasets. It uses cryptographic hashes to create unique identifiers for components based on their names, signatures, and parameters.</p>
+<h2 id="installation">Installation</h2>
+<p>Install the package with pip:</p>
+<pre><code class="language-bash">pip install mlregistry
+</code></pre>
+<p>Using conda:</p>
+<pre><code>conda install pip
+pip install mlregistry
+</code></pre>
+<h2 id="example">Example</h2>
+<p>Suppose you have a Perceptron model built with PyTorch. To start using the registry, import the Registry class and register the class you want to track:</p>
+<pre><code class="language-python">from models import Perceptron
+from mlregistry import Registry
+
+# Register components
+Registry.register(Perceptron)
+
+</code></pre>
+<p>The Registry class injects a metadata factory into the Perceptron model. This metadata includes:</p>
+<ul>
+<li>Model name: Used to retrieve the model instance from the registry and recognize it during serialization.</li>
+<li>Unique hash: Useful for identifying the model instance locally, based on the model’s name, signature, and constructor parameters.</li>
+<li>Arguments: A tuple with positional and keyword arguments for reconstructing the model instance.</li>
+<li>Signature: Includes model annotations, which is useful for exposing the model’s configuration and usage in request-response APIs.</li>
+</ul>
+<pre><code class="language-python">from mlregistry import getmetadata, gethash, getsignature
+
+registry = Registry() #Create a registry instance before or after registry of classes. 
+perceptron = Perceptron(784, 256, 10, p=0.5, bias=True)
+
+# Get metadata, hash, and signature of the model instance
+hash = gethash(perceptron)
+print(hash)  # e.g., &quot;1a79a4d60de6718e8e5b326e338ae533&quot;
+
+metadata = getmetadata(perceptron)
+print(metadata.arguments)  # {'input_size': 784, 'hidden_size': 256, 'output_size': 10, 'p': 0.5, 'bias': True}
+
+signature = getsignature(perceptron)
+print(signature)  # {input_size: int, hidden_size: int, output_size: int, p: float, bias: bool}
+
+</code></pre>
+<p>You can retrieve the model type from the registry:</p>
+<pre><code class="language-python">
+model_type = registry.get('Perceptron')
+model_instance = model_type(input_size=784, hidden_size=256, output_size=10, p=0.5, bias=True)
+
+assert isinstance(model_instance, Perceptron)
+
+</code></pre>
+<p>This works with other components as well, like optimizers and datasets. For complex setups, consider creating a repository class to manage components and dependencies, simplifying pipeline persistence.</p>
+<pre><code class="language-python">from torch.nn import Module, CrossEntropyLoss
+from torch.optim import Optimizer, Adam
+from torchvision.datasets import MNIST
+
+class Container:
+    models = Registry[Module]()
+    criterions = Registry[Module]()
+    optimizers = Registry[Optimizer](excluded_positions=[0], exclude_parameters={'params'})
+    datasets = Registry[Dataset](excluded_positions=[0], exclude_parameters={'root', 'download'})
+
+Container.models.register(Perceptron)
+Container.optimizers.register(Adam)
+Container.datasets.register(MNIST)
+
+model = Perceptron(784, 256, 10, p=0.5, bias=True)
+criterion = CrossEntropyLoss()
+optimizer = Adam(model.parameters(), lr=1e-3)
+dataset = MNIST('data', train=True, download=True)
+
+dataset_metadata = getmetadata(dataset)
+print(dataset_metadata)  # Serialize dataset metadata
+
+optimizer_metadata = getmetadata(optimizer)
+print(optimizer_metadata)  # Excluded parameters like 'params' or the first positional argument won’t appear in metadata
+</code></pre>
+<p>This approach enables component tracking and serialization without worrying about naming conflicts or manual parameter tracking.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2025-01-20 12:54:14.745933+00:00
+-->
