@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "mlregistry"
-version = "1.1.1"
-description = "Register, retrieve and get metadata from machine learning models."
-authors = ["Eric Cardozo <eric.m.cardozo@mi.unc.edu.ar>"]
+version = "1.2.0"
+description = "A simple package to track python objects."
+authors = ["mr-mapache <eric.m.cardozo@mi.unc.edu.ar>"]
 readme = "README.md"
 license = "MIT"
-repository = "https://github.com/mapache-software/ml-registry"
+repository = "https://github.com/mr-mapache/ml-registry"
 
 
 [tool.poetry.dependencies]

@@ -6,6 +6,7 @@ theme:
 nav:
   - Home: index.md
   - Registry: registry.md
+  - Accessors: accessors.md
 
 plugins:
   - mkdocstrings:

@@ -1,6 +1,6 @@
-### Inject metadata into objects without them knowing.
+### Access and manipulate the metadata of objects.
 
-::: mlregistry.registry
+::: mlregistry.accessors
     handler: python
     options:
       show_root_heading: false

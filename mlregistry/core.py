@@ -1,4 +1,5 @@
 from typing import Any
+from typing import overload
 from copy import deepcopy
 from inspect import signature
 
@@ -18,8 +19,7 @@ def cls_parse_args(args: tuple[Any], excluded_args: list[int], signature: dict[s
             kargs[key] = arg
     return deepcopy(kargs)
 
-def cls_parse_kwargs(kwargs: dict[str, Any], excluded_kwargs: set[str] = None) -> dict[str, Any]:
-    excluded_kwargs = excluded_kwargs or set()
+def cls_parse_kwargs(kwargs: dict[str, Any], excluded_kwargs: set[str]) -> dict[str, Any]:
     kargs = {}
     for key, value in kwargs.items():
         if key not in excluded_kwargs:
@@ -29,13 +29,18 @@ def cls_parse_kwargs(kwargs: dict[str, Any], excluded_kwargs: set[str] = None) -
 def cls_override_init(
     cls: type,
     excluded_args: list[int] = None,
-    excluded_kwargs: set[str] = None
+    excluded_kwargs: set[str] = None,
+    name: str = None
 ):
     init = cls.__init__
     signature = cls_signature(cls)
+    excluded_args = excluded_args or []
+    excluded_kwargs = excluded_kwargs or set()
     def init_wrapper(obj, *args, **kwargs):
         init(obj, *args, **kwargs)
         arguments = cls_parse_args(args, excluded_args, signature) | cls_parse_kwargs(kwargs, excluded_kwargs)
         setattr(obj, '__model__arguments__', arguments)
+        if name:
+            setattr(obj, '__model__name__', name)
     cls.__init__ = init_wrapper
     return cls    

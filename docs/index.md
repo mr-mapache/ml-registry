@@ -1,11 +1,17 @@
 # MLRegistry
 
-Register, manage, and track machine learning components easily, such as PyTorch models and optimizers. You can retrieve component metadata, inspect signatures, and ensure instance integrity through deterministic hashes.
+A simple package to track python objects based on the arguments they were created with.
+
+## Table of contents:
+- [Introduction](#introduction)
+- [Features](#features)
+- [Instalation](#instalation)
+- [Example](#example)
+- [License](#license)
 
 ## Introduction
 
-Tracking machine learning components can be challenging, especially when you have to name them, track their parameters, and ensure the instance you're using matches the one you trained. This library addresses these issues by providing a simple way to register, manage, and track machine learning components, such as models, optimizers, and datasets. It uses cryptographic hashes to create unique identifiers for components based on their names, signatures, and parameters.
-
+In certain scenarios, such as in machine learning, it's important to keep track of the objects created in your code and associate them with specific entities. For instance, a neural network is not only defined by its name but also by its hyperparameters. This package provides a streamlined way to register objects and retrieve them based on the arguments used during their creation, ensuring efficient tracking and management of these entities.
 
 ## Installation
 
@@ -15,88 +21,79 @@ Install the package with pip:
 pip install mlregistry
 ```
 
-Using conda:
-
-```
-conda install pip
-pip install mlregistry
-```
-
 ## Example
-Suppose you have a Perceptron model built with PyTorch. To start using the registry, import the Registry class and register the class you want to track:
+
+Suppose you want to create a machine learning model and efficiently track its hyperparameters. Here's an example with a `Perceptron` class:
+
 ```python
-from models import Perceptron
+class Perceptron:
+    def __init__(self, input_size: int, output_size: int):
+        ...
+
+```
+
+Using the `register` function from the mlregistry package, you can easily achieve this:
+
+```python
+from mlregistry import register
+
+register(Perceptron)
+```
+
+Once registered, any new object initialized from the Perceptron class will automatically have its creation arguments stored. This makes it simple to track the hyperparameters and assign a unique identity to the object, based on its name and hyperparameters.
+
+```python
+from mlregistry import getarguments
+from mlregistry import gethash
+
+model = Perceptron(input_size=10, output_size=1)
+arguments = getarguments(model) 
+hash = gethash(model)  # The hash acts as a locally unique identifier for the object
+
+print(arguments) # {'input_size': 10, 'output_size': 1}
+print(hash) # a8657a4057c4f7b3237aec904970630d
+```
+
+Notably, an object with the same name and identical arguments will always generate the same hash. This hash acts as a consistent local identifier, effectively treating machine learning models as entities with unique identities defined by their name and hyperparameters.
+
+You can also register objects in a Registry instance. A Registry serves as a collection of types, allowing you to register and retrieve objects by their name.
+
+Here’s an example:
+
+```python
+
 from mlregistry import Registry
 
-# Register components
-Registry.register(Perceptron)
+
+class Optimizer:
+    def __init__(self, model_params, learning_rate: float):
+        ...
+
+registry = Registry[Optimizer]() # Use generics to have PEP484 type hints.
+registry.register(Optimizer, excluded_args=[0], excluded_kwargs=['model_params']) 
 
 ```
 
-The Registry class injects a metadata factory into the Perceptron model. This metadata includes:
+In this example, the `excluded_args` and `excluded_kwargs` parameters are used to omit specific arguments from the hash calculation and the tracked parameters. These options are also available in the standalone `register` function.
 
-- Model name: Used to retrieve the model instance from the registry and recognize it during serialization.
-- Unique hash: Useful for identifying the model instance locally, based on the model’s name, signature, and constructor parameters.
-- Arguments: A tuple with positional and keyword arguments for reconstructing the model instance.
-- Signature: Includes model annotations, which is useful for exposing the model’s configuration and usage in request-response APIs.
-
-```python
-from mlregistry import getmetadata, gethash, getsignature
-
-registry = Registry() #Create a registry instance before or after registry of classes. 
-perceptron = Perceptron(784, 256, 10, p=0.5, bias=True)
-
-# Get metadata, hash, and signature of the model instance
-hash = gethash(perceptron)
-print(hash)  # e.g., "1a79a4d60de6718e8e5b326e338ae533"
-
-metadata = getmetadata(perceptron)
-print(metadata.arguments)  # {'input_size': 784, 'hidden_size': 256, 'output_size': 10, 'p': 0.5, 'bias': True}
-
-signature = getsignature(perceptron)
-print(signature)  # {input_size: int, hidden_size: int, output_size: int, p: float, bias: bool}
-
-```
-
-You can retrieve the model type from the registry:
+Once registered, you can retrieve an object from the registry using its name:
 
 ```python
 
-model_type = registry.get('Perceptron')
-model_instance = model_type(input_size=784, hidden_size=256, output_size=10, p=0.5, bias=True)
-
-assert isinstance(model_instance, Perceptron)
-
+optimizer = registry.get('Optimizer')(model_params={'param':'someparams'}, learning_rate=0.01)
+optimizer_arguments = getarguments(optimizer)
+print(optimizer_arguments) # {'learning_rate': 0.01} # model_params is excluded from the arguments
 ```
 
-This works with other components as well, like optimizers and datasets. For complex setups, consider creating a repository class to manage components and dependencies, simplifying pipeline persistence.
-
+This feature is especially useful when you need to dynamically list available machine learning models, such as in a REST API, and create a model using only its name and hyperparameters:
 
 ```python
-from torch.nn import Module, CrossEntropyLoss
-from torch.optim import Optimizer, Adam
-from torchvision.datasets import MNIST
-
-class Container:
-    models = Registry[Module]()
-    criterions = Registry[Module]()
-    optimizers = Registry[Optimizer](excluded_positions=[0], exclude_parameters={'params'})
-    datasets = Registry[Dataset](excluded_positions=[0], exclude_parameters={'root', 'download'})
-
-Container.models.register(Perceptron)
-Container.optimizers.register(Adam)
-Container.datasets.register(MNIST)
-
-model = Perceptron(784, 256, 10, p=0.5, bias=True)
-criterion = CrossEntropyLoss()
-optimizer = Adam(model.parameters(), lr=1e-3)
-dataset = MNIST('data', train=True, download=True)
-
-dataset_metadata = getmetadata(dataset)
-print(dataset_metadata)  # Serialize dataset metadata
-
-optimizer_metadata = getmetadata(optimizer)
-print(optimizer_metadata)  # Excluded parameters like 'params' or the first positional argument won’t appear in metadata
+print(registry.keys()) # ['Optimizer'] 
+print(registry.signature('Optimizer')) # {'learning_rate': float}
 ```
 
-This approach enables component tracking and serialization without worrying about naming conflicts or manual parameter tracking.
+The package includes additional functionality, which you can explore further in the documentation.
+
+## License
+
+This project is licensed under the MIT License - Use it as you wish in your projects.
