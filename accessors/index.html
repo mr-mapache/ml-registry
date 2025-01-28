@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Registry - mlregistry</title>
+    <title>Accessors - mlregistry</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -13,8 +13,8 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Registry";
-        var mkdocs_page_input_path = "registry.md";
+        var mkdocs_page_name = "Accessors";
+        var mkdocs_page_input_path = "accessors.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -40,14 +40,14 @@
                 <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
                 </li>
               </ul>
-              <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="#">Registry</a>
-    <ul class="current">
-    </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../registry/">Registry</a>
                 </li>
               </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../accessors/">Accessors</a>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Accessors</a>
+    <ul class="current">
+    </ul>
                 </li>
               </ul>
       </div>
@@ -64,7 +64,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-      <li class="breadcrumb-item active">Registry</li>
+      <li class="breadcrumb-item active">Accessors</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -73,14 +73,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h3 id="inject-metadata-into-objects-without-them-knowing">Inject metadata into objects without them knowing.</h3>
+                <h3 id="access-and-manipulate-the-metadata-of-objects">Access and manipulate the metadata of objects.</h3>
 
 
 <div class="doc doc-object doc-module">
 
 
 
-<a id="mlregistry.registry"></a>
+<a id="mlregistry.accessors"></a>
     <div class="doc doc-contents first">
 
 
@@ -99,148 +99,20 @@
 
 
 
-<div class="doc doc-object doc-class">
+
+<div class="doc doc-object doc-function">
 
 
-
-<h2 id="mlregistry.registry.Registry" class="doc doc-heading">
-            <code>Registry</code>
-
+<h2 id="mlregistry.accessors.getarguments" class="doc doc-heading">
+            <code class="highlight language-python">getarguments(obj)</code>
 
 </h2>
 
 
     <div class="doc doc-contents ">
 
-
-        <p>A class to register and retrieve types and their signatures. It acts as collection of types and is usefull in cases
-where a python object needs to be created dynamically based on a string name.</p>
-
-
-<table class="field-list">
-  <colgroup>
-    <col class="field-name" />
-    <col class="field-body" />
-  </colgroup>
-  <tbody valign="top">
-    <tr class="field">
-      <th class="field-name">Attributes:</th>
-      <td class="field-body">
-        <ul class="first simple">
-            <li>
-              <b><code>types</code></b>
-                  (<code>dict</code>)
-              –
-              <div class="doc-md-description">
-                <p>a dictionary of registered types.</p>
-              </div>
-            </li>
-            <li>
-              <b><code>signatures</code></b>
-                  (<code>dict</code>)
-              –
-              <div class="doc-md-description">
-                <p>a dictionary of registered types signatures.</p>
-              </div>
-            </li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<p><span class="doc-section-title">Methods:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-            <tr class="doc-section-item">
-              <td><code><span title="mlregistry.registry.Registry.register">register</span></code></td>
-              <td>
-                <div class="doc-md-description">
-                  <p>a decorator to register a type.</p>
-                </div>
-              </td>
-            </tr>
-            <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="mlregistry.registry.Registry.get" href="#mlregistry.registry.Registry.get">get</a></code></td>
-              <td>
-                <div class="doc-md-description">
-                  <p>get a registered type by name.</p>
-                </div>
-              </td>
-            </tr>
-            <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="mlregistry.registry.Registry.keys" href="#mlregistry.registry.Registry.keys">keys</a></code></td>
-              <td>
-                <div class="doc-md-description">
-                  <p>get the list of registered type names.</p>
-                </div>
-              </td>
-            </tr>
-            <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="mlregistry.registry.Registry.signature" href="#mlregistry.registry.Registry.signature">signature</a></code></td>
-              <td>
-                <div class="doc-md-description">
-                  <p>get the signature of a registered type by.</p>
-                </div>
-              </td>
-            </tr>
-      </tbody>
-    </table>
-        <p>Example:</p>
-<pre><code>.. code-block:: python
-
-from mlregistry.registry import Registry
-
-registry = Registry()
-
-@registry.register
-class Foo:
-    def __init__(self, x: int, y: float, z: str):
-        self.x = x
-        self.y = y
-        self.z = z
-
-instance = registry.get('Foo')(1, 2.0, '3') # instance of Foo
-signature = registry.signature('Foo') # {'x': 'int', 'y': 'float', 'z': 'str'}
-keys = registry.keys() # ['Foo']
-</code></pre>
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="mlregistry.registry.Registry.get" class="doc doc-heading">
-            <code class="highlight language-python">get(name)</code>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Get a registered type by name from the registry.</p>
+        <p>A function to get the arguments captured by the <strong>init</strong> method of a class when an instance of the
+given type is initialized.</p>
 
 
 <table class="field-list">
@@ -254,11 +126,34 @@ keys = registry.keys() # ['Foo']
       <td class="field-body">
         <ul class="first simple">
             <li>
-              <b><code>name</code></b>
-                  (<code>str</code>)
+              <b><code>obj</code></b>
+                  (<code>object</code>)
               –
               <div class="doc-md-description">
-                <p>the name of the type to be retrieved</p>
+                <p>The object to get the arguments from.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>AttributeError</code>
+              –
+              <div class="doc-md-description">
+                <p>If the object was not registered.</p>
               </div>
             </li>
         </ul>
@@ -278,10 +173,10 @@ keys = registry.keys() # ['Foo']
       <td class="field-body">
         <ul class="first simple">
             <li>
-                  <code><span title="typing.Optional">Optional</span>[type[T]]</code>
+                  <code>dict[str, <span title="typing.Any">Any</span>]</code>
               –
               <div class="doc-md-description">
-                <p>Optional[type[T]]: the registered type if found, otherwise None</p>
+                <p>dict[str, Any]: The arguments captured by the <strong>init</strong> method of the object.</p>
               </div>
             </li>
         </ul>
@@ -296,132 +191,18 @@ keys = registry.keys() # ['Foo']
 <div class="doc doc-object doc-function">
 
 
-<h3 id="mlregistry.registry.Registry.keys" class="doc doc-heading">
-            <code class="highlight language-python">keys()</code>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Get the list of registered type names.</p>
-
-
-<table class="field-list">
-  <colgroup>
-    <col class="field-name" />
-    <col class="field-body" />
-  </colgroup>
-  <tbody valign="top">
-    <tr class="field">
-      <th class="field-name">Returns:</th>
-      <td class="field-body">
-        <ul class="first simple">
-            <li>
-                  <code>list[str]</code>
-              –
-              <div class="doc-md-description">
-                <p>list[str]: the list of registered type names</p>
-              </div>
-            </li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="mlregistry.registry.Registry.signature" class="doc doc-heading">
-            <code class="highlight language-python">signature(name)</code>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Get the signature of a registered type by name.</p>
-
-
-<table class="field-list">
-  <colgroup>
-    <col class="field-name" />
-    <col class="field-body" />
-  </colgroup>
-  <tbody valign="top">
-    <tr class="field">
-      <th class="field-name">Parameters:</th>
-      <td class="field-body">
-        <ul class="first simple">
-            <li>
-              <b><code>name</code></b>
-                  (<code>str</code>)
-              –
-              <div class="doc-md-description">
-                <p>the name of the type to be retrieved.</p>
-              </div>
-            </li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<table class="field-list">
-  <colgroup>
-    <col class="field-name" />
-    <col class="field-body" />
-  </colgroup>
-  <tbody valign="top">
-    <tr class="field">
-      <th class="field-name">Returns:</th>
-      <td class="field-body">
-        <ul class="first simple">
-            <li>
-                  <code><span title="typing.Optional">Optional</span>[dict[str, str]]</code>
-              –
-              <div class="doc-md-description">
-                <p>dict[str, str]: the signature of the registered type.</p>
-              </div>
-            </li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
-    </div>
-
-</div>
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-
-<div class="doc doc-object doc-function">
-
-
-<h2 id="mlregistry.registry.register" class="doc doc-heading">
-            <code class="highlight language-python">register(cls, excluded_args=None, excluded_kwargs=None)</code>
+<h2 id="mlregistry.accessors.gethash" class="doc doc-heading">
+            <code class="highlight language-python">gethash(obj)</code>
 
 </h2>
-          <div class="doc-overloads">
-<pre class="highlight"><code class="language-python doc-signature">register(cls: type, excluded_args: list[int] = None, excluded_kwargs: set[str] = None)</code></pre><pre class="highlight"><code class="language-python doc-signature">register(cls: str, excluded_args: list[int] = None, excluded_kwargs: set[str] = None)</code></pre>          </div>
 
 
     <div class="doc doc-contents ">
 
-        <p>A function to override the <strong>init</strong> method of a class in order to capture the arguments passed 
-to it when an instance of the given type is initialized. Can be used as a raw decorator or as a
-decorator with a name argument to set the name of the class in the registry.</p>
+        <p>A function to get an unique deterministic hash of the object calculated from the name and the arguments
+captured by the <strong>init</strong> method of the object. If the object was not registered, an AttributeError will be
+raised. The hash will be calculated using the md5 algorithm by default but can be setted manually using the
+sethash function.</p>
 
 
 <table class="field-list">
@@ -435,31 +216,11 @@ decorator with a name argument to set the name of the class in the registry.</p>
       <td class="field-body">
         <ul class="first simple">
             <li>
-              <b><code>cls</code></b>
-                  (<code>type | str | None</code>)
+              <b><code>obj</code></b>
+                  (<code>object</code>)
               –
               <div class="doc-md-description">
-                <p>The class to override the <strong>init</strong> method or the name of the class in the registry.</p>
-              </div>
-            </li>
-            <li>
-              <b><code>excluded_args</code></b>
-                  (<code>list[int]</code>, default:
-                      <code>None</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>The indexes of the arguments to exclude from the capture. Defaults to None.</p>
-              </div>
-            </li>
-            <li>
-              <b><code>excluded_kwargs</code></b>
-                  (<code>set[str]</code>, default:
-                      <code>None</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>The names of the keyword arguments to exclude from the capture. Defaults to None.</p>
+                <p>The object to get the hash from.</p>
               </div>
             </li>
         </ul>
@@ -479,9 +240,203 @@ decorator with a name argument to set the name of the class in the registry.</p>
       <td class="field-body">
         <ul class="first simple">
             <li>
-<b><code>type</code></b>              –
+<b><code>str</code></b>(                  <code>str</code>
+)              –
               <div class="doc-md-description">
-                <p>The class with the <strong>init</strong> method overriden or a decorator to override the <strong>init</strong> method of a class.</p>
+                <p>The hash of the object.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>AttributeError</code>
+              –
+              <div class="doc-md-description">
+                <p>If the object was not registered and does not have a hash setted.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="mlregistry.accessors.getname" class="doc doc-heading">
+            <code class="highlight language-python">getname(obj)</code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>A function to get the name of the object. If the object has a <strong>model__name</strong> attribute, it will be
+returned. Otherwise, the class name will be returned.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>obj</code></b>
+                  (<code>object</code>)
+              –
+              <div class="doc-md-description">
+                <p>The object to get the name from.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>str</code></b>(                  <code>str</code>
+)              –
+              <div class="doc-md-description">
+                <p>The name of the object.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="mlregistry.accessors.sethash" class="doc doc-heading">
+            <code class="highlight language-python">sethash(obj, hash=None)</code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>A function to set the hash of the object. If the hash is not provided, it will be calculated using the
+md5 algorithm from the name and the arguments captured by the <strong>init</strong> method of the object by default.
+If a hash is provided, it will be setted as the hash of the object.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>obj</code></b>
+                  (<code>object</code>)
+              –
+              <div class="doc-md-description">
+                <p><em>description</em></p>
+              </div>
+            </li>
+            <li>
+              <b><code>hash</code></b>
+                  (<code>str</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p><em>description</em>. Defaults to None.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="mlregistry.accessors.setname" class="doc doc-heading">
+            <code class="highlight language-python">setname(obj, name=None)</code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>A function to set the name of the object. If the name is not provided, it will be retrieved from the
+class name. If a name is provided, it will be setted as the name of the object.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>obj</code></b>
+                  (<code>object</code>)
+              –
+              <div class="doc-md-description">
+                <p>The object to set the name.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>name</code></b>
+                  (<code>str</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The name to set. Defaults to None.</p>
               </div>
             </li>
         </ul>
@@ -504,8 +459,7 @@ decorator with a name argument to set the name of the class in the registry.</p>
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../accessors/" class="btn btn-neutral float-right" title="Accessors">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../registry/" class="btn btn-neutral float-left" title="Registry"><span class="icon icon-circle-arrow-left"></span> Previous</a>
     </div>
 
   <hr/>
@@ -528,10 +482,8 @@ decorator with a name argument to set the name of the class in the registry.</p>
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../registry/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
-    
-      <span><a href="../accessors/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
