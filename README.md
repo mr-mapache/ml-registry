@@ -1,6 +1,6 @@
 # MLRegistry
 
-A simple package to track python objects based on the arguments they were created with.
+A simple package to track python objects based on the arguments they were created with. The documentation can be found here: [https://mr-mapache.github.io/ml-registry/](https://mr-mapache.github.io/ml-registry/).
 
 ## Table of contents:
 - [Introduction](#introduction)
