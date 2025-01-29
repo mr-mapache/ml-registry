@@ -12,18 +12,28 @@ def cls_signature(cls: type, excluded_args: list[int] = None, excluded_kwargs: s
             cls_signature[key] = value.annotation.__name__ if value.annotation != value.empty else "Any"
     return deepcopy(cls_signature)
 
+
+def handle_arg(arg):
+    if hasattr(arg, '__model__arguments__'):
+        if hasattr(arg, '__model__name__'): 
+            return {getattr(arg, '__model__name__'): getattr(arg, '__model__arguments__')} 
+        else:
+            return {arg.__class__.__name__: getattr(arg, '__model__arguments__')}
+    else:
+        return arg    
+
 def cls_parse_args(args: tuple[Any], excluded_args: list[int], signature: dict[str, str]) -> dict[str, Any]: 
     kargs = {}
     for index, (arg, key) in enumerate(zip(args, signature.keys())):
         if index not in excluded_args:
-            kargs[key] = arg
+            kargs[key] = handle_arg(arg)
     return deepcopy(kargs)
 
 def cls_parse_kwargs(kwargs: dict[str, Any], excluded_kwargs: set[str]) -> dict[str, Any]:
     kargs = {}
-    for key, value in kwargs.items():
+    for key, arg in kwargs.items():
         if key not in excluded_kwargs:
-            kargs[key] = value
+            kargs[key] = handle_arg(arg)
     return deepcopy(kargs)
     
 def cls_override_init(

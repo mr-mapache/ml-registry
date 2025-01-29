@@ -1,5 +1,6 @@
 from mlregistry.registry import register
-from mlregistry.accessors import getarguments, gethash, getname
+from mlregistry.accessors import sethash, setname
+from mlregistry.accessors import getarguments, gethash, getname, getmetadata
 
 @register
 class Model:
@@ -44,3 +45,11 @@ def test_registration():
     optimizer = Optimizer(1, 2.0, '3')
     assert getname(optimizer) == 'Optimizer'
     assert getarguments(optimizer) == {'y': 2.0, 'z': '3'}
+
+    setname(model)
+    sethash(model)
+    assert getmetadata(model) == {
+        'name': 'Model',
+        'hash': 'b12461be073bff9f5847f3f423767aa2',
+        'arguments': {'x': 1, 'y': 2.0, 'z': '3'}
+    }

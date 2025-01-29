@@ -1,6 +1,7 @@
 from typing import Any
 from json import dumps
 from hashlib import md5
+from copy import deepcopy
 
 def getarguments(obj: object) -> dict[str, Any]:
     """
@@ -89,3 +90,20 @@ def setname(obj: object, name: str = None) -> None:
         setattr(obj, '__model__name__', getname(obj))
     else:
         setattr(obj, '__model__name__', name)
+
+
+def getmetadata(obj: object) -> dict[str, Any]:
+    """
+    A function to get the metadata of the object. The metadata is a dictionary containing the name, the
+    arguments and the hash of the object.
+
+    Args:
+        obj (object): The object to get the metadata.
+
+    Returns:
+        dict[str, Any]: The metadata of the object.
+    """
+    hash_field = {'hash': getattr(obj, '__model__hash__')} if hasattr(obj, '__model__hash__') else {}
+    name_field = {'name': getattr(obj, '__model__name__')} if hasattr(obj, '__model__name__') else {}
+    arguments_field = {'arguments': getattr(obj, '__model__arguments__')} if hasattr(obj, '__model__arguments__') else {}
+    return deepcopy(hash_field | name_field | arguments_field)
