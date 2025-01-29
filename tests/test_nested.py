@@ -22,4 +22,7 @@ def test_nested():
     model = Model(module)
 
     assert getarguments(module) == {'x': 1, 'y': 2.0, 'z': '3', 't': '4'}
-    assert getarguments(model) == {'module': {'Module': {'x': 1, 'y': 2.0, 'z': '3', 't': '4'}}}
+    assert getarguments(model) == {'module': {
+        'name': 'Module',
+        'arguments': {'x': 1, 'y': 2.0, 'z': '3', 't': '4'}}
+    }
