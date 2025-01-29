@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlregistry"
-version = "1.2.0"
+version = "1.2.1"
 description = "A simple package to track python objects."
 authors = ["mr-mapache <eric.m.cardozo@mi.unc.edu.ar>"]
 readme = "README.md"
