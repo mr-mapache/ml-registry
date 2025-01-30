@@ -15,10 +15,14 @@ def cls_signature(cls: type, excluded_args: list[int] = None, excluded_kwargs: s
 
 def handle_arg(arg):
     if hasattr(arg, '__model__arguments__'):
-        return deepcopy({
-            'name': getattr(arg, '__model__name__') if hasattr(arg, '__model__name__') else arg.__class__.__name__,
-            'arguments': getattr(arg, '__model__arguments__')
-        })
+        arguments = getattr(arg, '__model__arguments__')
+        if arguments:
+            return deepcopy({
+                'name': getattr(arg, '__model__name__') if hasattr(arg, '__model__name__') else arg.__class__.__name__,
+                'arguments': getattr(arg, '__model__arguments__')
+            })
+        else:
+            return deepcopy(getattr(arg, '__model__name__') if hasattr(arg, '__model__name__') else arg.__class__.__name__)
     else:
         return arg    
 
